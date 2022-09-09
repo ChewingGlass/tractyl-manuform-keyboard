@@ -12,27 +12,26 @@
             [dactyl-keyboard.utils :refer [deg2rad]]
             [dactyl-keyboard.hotswap :refer [official-hotswap-clamp]]
             [dactyl-keyboard.screws :refer [screw-insert-shape]]
-            [dactyl-keyboard.dactyl :refer [model-right]]
             [dactyl-keyboard.trackball :refer [trackball-mount-translated-to-model]]))
 
 ;;;;;;;;;;;;;
 ;; Hotswap ;;
 ;;;;;;;;;;;;;
 
-(def hotswap-connector (translate [0 3 -3] (cube 2 6 2)))
+(def hotswap-connector (translate [0 3 -3] (cube 6 6 2)))
 (def bottom-hotswap-connector (rotate (deg2rad 180) [0 0 1] hotswap-connector))
 
 (defn connector-place [column row hotswap hotswap-connector]
   (if (and
        (not= column lastcol)
        (not (and (= column 3) (= row lastrow))))
-    (let [bottom          (key-place (+ 1 column) row (translate [-18 0 -8] hotswap-connector))
-          bottom-next-row (key-place (+ 1 column) (+ row 1) (translate [-18 0 -8] hotswap-connector))]
+    (let [bottom          (key-place (+ 1 column) row (translate [-22 0 -3.5] hotswap-connector))
+          bottom-next-row (key-place (+ 1 column) (+ row 1) (translate [-22 0 -3.5] hotswap-connector))]
       (union
        ; Hull directly down
        (hull (key-place column row hotswap-connector) bottom)
-       ; hull over
-       (hull bottom (key-place (+ 1 column) row hotswap-connector))
+       ; hull over. Avoid doing this with trackball
+       (if (and trackball-enabled (= row (- lastrow 1)) (< column 2)) nil (hull bottom (key-place (+ 1 column) row hotswap-connector)))
        ; hull to the next row
        (if (or (and (= row (- lastrow 1)) (= column 2))
                (< row (- lastrow 1)))
@@ -87,7 +86,7 @@
 (def thumb-hotswap-mesh
   (thumb-hotswap-place official-hotswap-clamp))
 
-(def hotswap-screw-hole (cylinder screw-insert-case-radius 10))
+(def hotswap-screw-hole (cylinder screw-insert-case-radius 20))
 
 (defn hotswap-screw-place [in-shape]
   (let [shape (translate [0 -11.5 -2] in-shape)]
@@ -97,7 +96,14 @@
      (key-place 1 1 shape)
      (key-place 3 2 shape))))
 
+(defn thumb-hotswap-screw-place [in-shape]
+  (let [shape (translate [0 -11.5 -2] in-shape)]
+    (union
+     (if trackball-enabled (thumb-tr-place (translate [-9 3 0] shape)) (thumb-tl-place shape))
+     (thumb-bl-place shape))))
+
 (def hotswap-holes (hotswap-screw-place hotswap-screw-hole))
+
 (def hotswap-screw-holders
   (let [shape      (rotate (deg2rad 180) [1 0 0]
                            (screw-insert-shape (+ screw-insert-bottom-radius 1.65) (+ screw-insert-top-radius 1.65) (+ screw-insert-height 1.5)))
@@ -110,15 +116,26 @@
      (hotswap-screw-place hollow-out)
      (hotswap-screw-place hotswap-screw-hole))))
 
-(def thumb-hotswap-screw-holders (cube 1 1 1))
+(def thumb-hotswap-screw-holders
+  (let [shape      (rotate (deg2rad 180) [1 0 0]
+                           (screw-insert-shape (+ screw-insert-bottom-radius 1.65) (+ screw-insert-top-radius 1.65) (+ screw-insert-height 1.5)))
+        hollow-out (rotate (deg2rad 180) [1 0 0]
+                           (screw-insert-shape screw-insert-bottom-radius screw-insert-top-radius screw-insert-height))]
+    (difference
+     (union
+      (thumb-hotswap-screw-place shape)
+      (thumb-hotswap-screw-place (hull shape (translate [-1.5 -3 2] (cube 3 2 3)))))
+     (thumb-hotswap-screw-place hollow-out)
+     (thumb-hotswap-screw-place hotswap-screw-hole))))
 
 (def hotswap-mesh
   (difference
    (union
     hotswap-mesh
     hotswap-screw-holders)
+  hotswap-holes
    (translate [0 0 -20] (cube 350 350 40)) ; Make sure it doesn't go below the ground
-   model-right))
+   ))
 
 (def thumb-hotswap-mesh
   (difference

@@ -10,6 +10,7 @@
             [dactyl-keyboard.constants :refer :all]
             [dactyl-keyboard.hand :refer [hand]]
             [dactyl-keyboard.buckle :refer :all]
+            [dactyl-keyboard.hotswap-mesh :refer [hotswap-holes]]
             [dactyl-keyboard.screws :refer [screw-insert-shape]]
             [dactyl-keyboard.palm-rest
              :refer
@@ -100,6 +101,7 @@
       trrs-holder-hole
       screw-insert-holes
       (translate palm-hole-origin (palm-rest-hole-rotate palm-buckle-holes))))
+    hotswap-holes
    (if trackball-enabled
      (translate trackball-origin (dowell-angle raised-trackball))
      nil)
@@ -113,13 +115,13 @@
 (spit "things/right.scad"
       (write-scad
        (include "../nutsnbolts/cyl_head_bolt.scad")
+       (difference
        (union
-        model-right
-        (translate (key-position 0 1 [-20 20 0]) (cube 49 70 200))
-        (translate (key-position 3 3 [10 10 0]) (cube 60 30 200))
-        (translate (key-position 2 2 [14 -4 0]) (cube 41 28 200))
-        (translate (key-position 4 0 [-10 24 0]) (cube 80 32 200))
-        (translate (key-position 4 3 [0 0 0]) (cube 80 40 200)))))
+       connectors
+       pinky-connectors
+       key-holes)
+       hotswap-holes
+        )))
 
 (defn -main [dum] 1)
 
