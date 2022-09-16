@@ -12,6 +12,7 @@
             [dactyl-keyboard.constants :refer :all]
             [dactyl-keyboard.screws :refer :all]
             [dactyl-keyboard.thumbs :refer :all]
+            [dactyl-keyboard.hotswap-mesh :refer [hotswap-mesh]]
             [dactyl-keyboard.tenting
              :refer
              [thumb-tent-origin index-tent-origin tent-nut tent-thread]]

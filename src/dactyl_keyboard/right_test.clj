@@ -8,9 +8,9 @@
             [dactyl-keyboard.utils :refer [deg2rad]]
             [dactyl-keyboard.constants :refer :all]
             [dactyl-keyboard.thumbs :refer :all]
-            [dactyl-keyboard.dactyl :refer [model-right]]
+            [dactyl-keyboard.dactyl :refer [right-thumb model-right right-keys]]
             [dactyl-keyboard.bottom-plate :refer [right-plate]]
-            [dactyl-keyboard.hotswap-mesh :refer [thumb-hotswap-mesh hotswap-mesh]]
+            [dactyl-keyboard.hotswap-mesh :refer [left-hotswap-mesh thumb-hotswap-mesh left-thumb-hotswap-mesh hotswap-mesh]]
             [dactyl-keyboard.placement :refer [key-place]]
             [dactyl-keyboard.hand :refer [hand]]
             [dactyl-keyboard.trackball :refer :all]))
@@ -81,11 +81,11 @@
        (difference
         (union
          ;         hand-on-test
-         (color [220/255 120/255 120/255 1] hotswap-mesh)
+         (color [220/255 120/255 120/255 1] (translate [0 0 -1.5] hotswap-mesh))
          (color [220/255 120/255 120/255 1] thumb-hotswap-mesh)
 
          (color [220/255 163/255 163/255 1] right-plate)
-         model-right)
+         right-thumb)
          ;         (translate (map + palm-hole-origin [0 (+ buckle-length 3) (/ buckle-height 2)])
          ;                    (palm-rest-hole-rotate palm-rest))
          ;         (if trackball-enabled (translate trackball-origin test-ball) nil)
@@ -94,3 +94,6 @@
 
 
          (translate [0 0 -20] (cube 350 350 40)))))
+
+(spit "things/left-thumb-hotswap-mesh-test.scad" (write-scad  (union left-thumb-hotswap-mesh (mirror [-1 0 0] right-thumb) )))
+(spit "things/left-hotswap-mesh-test.scad" (write-scad  (union left-hotswap-mesh (mirror [-1 0 0] right-keys))))

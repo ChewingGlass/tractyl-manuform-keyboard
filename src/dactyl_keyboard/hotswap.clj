@@ -26,10 +26,10 @@
                  nil)))))
 
 (def official-hotswap-clamp
-  (translate [-1 -1 -2.5]
+  (translate [-1 -1 -0.5]
              (difference
-              (official-hotswap 6.25 6.25 5.5 false)
-              (translate [0 0 2.5] (official-hotswap 5.25 5.25 2 true))
+              (official-hotswap 6.25 6.25 3.5 false)
+              (translate [0 0 1] (official-hotswap 5.25 5.25 2 true))
               ; The middle piece
               (->>
                (cube 2 5 2)

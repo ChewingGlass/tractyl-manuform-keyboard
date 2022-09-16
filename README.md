@@ -80,10 +80,6 @@ Optionally, you can look at [Customization](#customizing-the-keyboard) if you'd 
       * [Watch out for...](#watch-out-for)
       * [Testing](#testing)
    * [License](#license)
-  
-**Code Warning** Hopefully you're just printing the keyboard, so you wont need to look
-at it anyway; but the code I added here is pretty questionable. I'm sure I'll get around to cleaning it up eventually. 
-Feel free to message me if you have any questions.
 
 ## Parts
 
@@ -147,25 +143,23 @@ Because money isn't the only thing your spending... Here's a rough estimate of t
 
 ##### Printing
 
- * Right case - 18 hours
- * Left case - 18 hours
+ * Right case - 20 hours
+ * Left case - 20 hours
  * Right plate - 8-12 hours*
  * Left plate - 4 hours
  * Palm rest - 3 hours
- * Tent stands and feet - 3 hours*
- * Hotswap sockets - 3 hours*
+ * Tent stands and feet - 3 hours
+ * Hotswap mesh - 5 hours each
 
-\* - I forgot
 
-So you're looking at roughtly 60 hours of continous printing. And that's assuming you _like_ the first model that prints.
+So you're looking at roughtly 70 hours of continous printing. And that's assuming you _like_ the first model that prints.
 
 I'd suggest testing it out with switches and changing things to your liking.
 
 
 ##### Soldering and Assembly
 
-I'd budget about 20 hours for each side of the keyboard. Soldering is tedious, you'll have to debug, etc. Inserting the socket buckles
-is not as easy as you'd think. So 40 hours total of labor. YMMV
+It took me about 4 hours to solder each half of the keyboard, plus another 1 hour hooking up TRRS and trackball. I've done this a few time now, so it may take you longer or shorter if you're experienced.
 
 ## Principles
 
@@ -178,8 +172,6 @@ large keyboard case; but you want to test things like the hotswap mounts, trackb
 can print faster. Remember, coding is fast, printing is slow. Model and test as much as possible
 before printing. An example of this is the model of my hand in `dactyl.clj`. I use that on right-test.scad to see
 if things appear to be the right dimensions
-
-**Buckles are Awesome** - Buckles secure the hotswap sockets and palm rests. They make it very easy to add and remove pieces. 3D printed screws are nice too, for the tenting.
 
 ## Printing
 
@@ -278,26 +270,9 @@ Do make sure you set `printed-hotswap?` based on whether you're using 3d printed
 
 Print in it's current orientation, palm rest facing up. Tree supports work well here.
 
-### Hotswap Socket Buckles
+### Hotswap Mesh
 
-If you're using `printed-hotswap? false`
-
-`things/hotswap-clamp`
-
-You'll want to right click on the model in cura and multiply it. I printed batches of 25. Note that some will probably
-break while you're assembling, so print a few extra.
-
-Helps to print these with a brim. Make sure the buckles align on the x/y axis and not the z axis, or they'll snap
-
-With `printed-hotswap? true`:
-
-`things/hotswap-socket` and `things/hotswap-clamp`
-
-Make sure the buckles align on the x/y axis and not the z axis, or they'll snap.
-
-Use needle-nosed pliers to pull the metal pin out of the female headers. Insert them into the clamp, then push the
-clamp on top. This should leave two holes that the switches will fall into. You can then solder to the pins coming out
-of the bottom.
+Use the same settings you use for the keyboard. Tree supports, 100% infill, etc.
 
 ## Soldering
 
@@ -355,65 +330,29 @@ It also _does not_ matter where you ultimately attach the rows and columns. It d
 
 ##### Solder Outside the Case
 
-While it might look fun to solder inside the keyboard case, it's a pain. You will burn the plastic. You'll have to manage weird angles. You should solder the rows and columns outside 
-of the case, with detachable connectors to the trackball sensor and the pro micro. Then you can debug, make sure it's all working, then
-insert the keyboard's nervous system into the case. 
+While it might look fun to solder inside the keyboard case, it's a pain. You will burn the plastic. The hotswap mesh makes things much easier to solder, as you can do it all in-place without the case in the way. 
 
-### Rows
+### Columns and Rows
 
-The ends of the diodes should touch forming a row. The black line on the diode should be facing away from the socket. 
+First, solder the rows. The ends of the diodes should touch forming a row. The black line on the diode should be facing away from the socket. 
 I'd suggest doing this one row at a time, first soldering the diodes. Then soldering the diodes together. 
 
-You'll want to cut the diodes short so they're not in the way.
+I cut the end of the diode touching the hotswap socket short, and leave the other end long so it can connect to the next row.
 
-**NOTE**: Don't use more solder than you need on the socket, it will make it difficult to insert into the socket buckles later on.
+Then, solder the columns. You can either use a single wire stripped in multiple places, or like I did, multiple wires going down the column.
 
-![Diodes](images/Rows%20Pt%201.jpg)
+After you finish soldering the rows and columns, connect a ribon cable
 
-Then, you'll want to use the wire stripper to create a wire with strips for where the diodes will connect.
+   * (1) To the start of each row
+   * (2) To the start of each column
 
-The start of that wire should connect to a header pin, like so
+These will eventually connect to the micro controller, so make sure the end of the ribbon has wires that can be inserted into the controller. I ended up soldering a solid wire to the end of the ribon wire. Because the ribbon wire is composed of a bunch of small wires.
 
-![Diodes](images/Rows%20Headers.jpg)
+You can see the completed mesh here:
 
-**NOTE**: Give yourself more room than you think you need on these wires. If you make it too small, you'll have to break the wire and resolder. 
-If you make it a little bigger, it'll still fit in the case so no harm done. Also, remember to consider where this wire will be in the actual case. If it's going to end in the thumb cluster, you'll need more lead.
-
-**NOTE**: Unlike the following picture, you should have the end of the wire have an extra lead and connect to a header pin. That way you don't have to 
-solder an extra wire to the row to connect it to the Pro Micro. I didn't do this on the right half while taking pictures, but it made the left half easier.
-
-![Row Wire](images/Rows%20Pt%202.jpg)
-
-It can help to use aligator clips to hold things in place when you're soldering the rows together:
-
-![Row Wire Soldering](images/Rows%20Pt%203.jpg)
-
-Once you're done, it'll look like this (except with header pins connected. Do not forget to do this):
-
-![Rows Done](images/Rows%20Pt%204.jpg)
-
-### Columns
-
-The columns are much the same as the rows. 
-Remember to consider where this wire will be in the actual case. If it's going to end in the thumb cluster, you'll need more lead.
-It's easier if you slide the wire through the slits in the sockets:
-
-![Column Soldering](images/Columns%20Pt%201.jpg)
-
-
-You'll want each column to go to a header pin. Pay attention to the layout here:
-
-![Rows Done](images/Rows%20Pt%204.jpg)
-
-This is aligned how it will go into the keyboard
-
-### Finished Product
-
-When you're done, you'll have a nice rats nest like this:
-
-![Finished Wiring](images/Finished%20Wiring.jpg)
-
-You should take this opportunity to flash your pro micro and test each of the sockets by inserting a switch and testing that the key shows up. See [Flashing QMK](#Flashing QMK)
+[Left Side](./images/left.png)
+[Right Side](./images/right.png)
+[Complete](./images/complete.png)
 
 ### TRRS
 
@@ -447,7 +386,7 @@ I never bothered to figure out how to make QMK be able to use either side of the
 To flash the full keyboard, you'll want to (assuming your keymap name is `default`)
 
   1. Set [MASTER_LEFT](https://github.com/noahprince22/qmk_firmware/blob/trackball/keyboards/handwired/dactyl_manuform/4x5/keymaps/default/config.h#L31) and unset MASTER_RIGHT (comment it out)
-  2. Open a terminal. From `qmk_firmware/` run `make handwired/dactyl_manuform/4x5:default:avrdude`
+  2. Open a terminal. From `qmk_firmware/` run `make git-submodule` and `make handwired/dactyl_manuform/4x5:default:avrdude`
   3. Connect the RST and GND when prompted to reset. Your keymap should include REST key so you don't have to do this by manually attaching wires once you've flashed. I put it on a layer
   4. Set [MASTER_RIGHT](https://github.com/noahprince22/qmk_firmware/blob/trackball/keyboards/handwired/dactyl_manuform/4x5/keymaps/default/config.h#L31)
   5. Connect the micro usb cable to the arduino pro micro and connect the TRRS cables bewteen left and right sides
