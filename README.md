@@ -25,6 +25,11 @@ My goal for this keyboard was to accomplish the following features without the u
 
 Additionally, I wanted a keyboard setup that was easy to iterate on, so that I can continue to tweak it every time I get bored.
 
+
+# A Word of Caution
+
+The repo is best-effort. What I built has issues. The hotswap mesh makes contact with both the trackball and the edges of the case. It also doesn't fit into the top part of the thumb on either side. You will need to melt things down with the soldering iron to get them to fit. Or fix the code. I didn't have time. 
+
 # Build Guide
 
 This guide is split into a few main parts. These mostly follow the steps you'll take to
@@ -350,9 +355,9 @@ These will eventually connect to the micro controller, so make sure the end of t
 
 You can see the completed mesh here:
 
-[Left Side](./images/left.png)
-[Right Side](./images/right.png)
-[Complete](./images/complete.png)
+![Left Side](./images/left.png)
+![Right Side](./images/right.png)
+![Complete](./images/complete.png)
 
 ### TRRS
 
