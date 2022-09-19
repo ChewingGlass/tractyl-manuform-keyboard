@@ -28,7 +28,7 @@ Additionally, I wanted a keyboard setup that was easy to iterate on, so that I c
 
 # A Word of Caution
 
-The repo is best-effort. What I built has issues. The hotswap mesh makes contact with both the trackball and the edges of the case. It also doesn't fit into the top part of the thumb on either side. You will need to melt things down with the soldering iron to get them to fit. Or fix the code. I didn't have time. 
+The repo is best-effort. What I built has issues. The hotswap mesh makes contact with both the trackball and the edges of the case. TIt also doesn't fit into the top part of the thumb on either side. The trrs cable and micro usb holes are too small. You will need to melt things down with the soldering iron to get them to fit. Or fix the code. I didn't have time. 
 
 # Build Guide
 
