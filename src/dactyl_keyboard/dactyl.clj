@@ -19,7 +19,7 @@
             [dactyl-keyboard.web-connectors :refer :all]
             [dactyl-keyboard.trackball
              :refer
-             [trackball-origin trackball-insertion-cyl raised-trackball dowell-angle]]
+             [trackball-origin trackball-insertion-cyl raised-trackball btu-angle]]
             [dactyl-keyboard.thumbs :refer :all]
             [dactyl-keyboard.walls :refer :all]
             [dactyl-keyboard.peripherals :refer :all]
@@ -104,7 +104,7 @@
   thumb-hotswap-holes
   ;;  hotswap-mesh
    (if trackball-enabled
-     (translate trackball-origin (dowell-angle raised-trackball))
+     (translate trackball-origin (btu-angle raised-trackball))
      nil)
    (translate [0 0 -20] (cube 350 350 40))))
 

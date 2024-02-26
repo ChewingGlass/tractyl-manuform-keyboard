@@ -29,7 +29,7 @@
 
 (def nrows 4)
 (def ncols 5)
-(def trackball-enabled false)
+(def trackball-enabled true)
 (def printed-hotswap? false)
 
 ; Whether you want the 3d printed version of the hotswap or you ordered some from krepublic

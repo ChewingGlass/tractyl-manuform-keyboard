@@ -16,8 +16,8 @@
 ;; Trackball ;;
 ;;;;;;;;;;;;;;;
 
-(def dowel-depth-in-shell 1.5)
-(def bearing-protrude (- 3 dowel-depth-in-shell))
+(def dowel-depth-in-shell 0)
+(def bearing-protrude (+ 2 dowel-depth-in-shell))
 
 ; Radius of the baring minus how deep it's going into the shell
 (def trackball-width 34)
@@ -27,42 +27,47 @@
 (def holder-thickness 4.2)
 (def outer-width (+ (* 2 holder-thickness) trackball-width-plus-bearing))
 
-(def axel-angle 15)
-(def dowell-width 3)
+(def axel-angle 12)
+(def btu-width 3)
 (def dowel-top-change 0)
 (def dowel-top-height 1.5)
-(def dowell-height 6)
+(def btu-height 6)
 
 ; Dowel height is actually 6mm. But attempting to get it to "snap" in place
-(def dowell
+(def btu
   (union
-    (cylinder (- (/ dowell-width 2) dowel-top-change) (+ dowell-height dowel-top-height) :fn 50)
-    (cylinder (/ dowell-width 2) dowell-height :fn 50)))
+    (cylinder (- (/ btu-width 2) dowel-top-change) (+ btu-height dowel-top-height) :fn 50)
+    (cylinder (/ btu-width 2) btu-height :fn 50)))
 (def bearing (cylinder (/ 8.5 2) 3))
 
-; Bearing is actually 6mm x 2.5mm, model it as 8.5mm x 3 to give it room to spin
-(def dowell-bearing (rotate (deg2rad 90) [1 0 0] (union dowell bearing)))
+(def btu-holder (translate [2.5 0 0] (rotate (deg2rad 90) [0 1 0] (cylinder 7.5 11))))
+(def btu-backing (color [220/255 163/255 163/255 1] (translate [3.5 0 0] (rotate (deg2rad 90) [0 1 0] (cylinder 9.5 13)))))
 
-(defn rotated_dowell [angle]
+(spit "things/btu-test.scad"
+      (write-scad (difference btu-backing btu-holder)))
+(defn rotated_btu [angle, btu]
   (rotate (deg2rad angle) [0, 0, 1]
           (rotate (deg2rad axel-angle) [0, 1, 0]
                   (translate [(+ (/ trackball-width-plus-bearing 2) dowel-depth-in-shell) 0 0]
-                             (union
-                              ; Add a cube on the side of the dowell so there's an insertion point when we diff with the shell
-                              (translate [(- (/ dowell-width 2)) 0 0]
-                                         (cube (+ dowell-width 1) (- dowell-height dowel-top-change) dowell-width))
-                              dowell-bearing)))))
+                             
+                              
+                              btu))))
 
-(def dowells
+(def btus
   (union
-   (rotated_dowell 0)
-   (rotated_dowell 120)
-   (rotated_dowell 240)))
+   (rotated_btu -20 btu-holder)
+   (rotated_btu 90 btu-holder)
+   (rotated_btu 210 btu-holder)))
+(def btu-backs
+  (union
+   (rotated_btu -20 btu-backing) 
+   (rotated_btu 90 btu-backing)
+   (rotated_btu 210 btu-backing)))
 (def vertical-hold 0)
 
 ; Millimeters of verticle hold after the curviture of the sphere ends to help hold the ball in
 
-(def cup
+(def cup 
   (difference
    (union
     (sphere (/ outer-width 2)) ; Main cup sphere
@@ -87,19 +92,19 @@
 
 (def holder-negatives
   (union
-   dowells
+   btus
    bottom-trim))
 (def cup-bottom
   (translate [0 0 (- (- (/ outer-width 2) (/ trim 2)))] (cube outer-width outer-width trim)))
 
 
 (defn clearance [extrax extray extraz]
-  (translate [0 0 (/ extraz 2)]
+  (translate [0 0 (- (/ extraz 2) 5)]
              (cube (+ keyswitch-width extrax) (+ keyswitch-width extray) extraz)))
 
 (def thumb-key-clearance
   (union
-   (thumb-1x-layout (clearance 0 0 30))
+   (thumb-1x-layout (translate [0 0 -7] (clearance 5 2.5 15)))
    (thumb-15x-layout (rotate (/ π 2) [0 0 1] (clearance 2.5 2.5 30)))))
 
 (def key-clearance
@@ -141,21 +146,24 @@
   (->> shape
        (rotate (deg2rad -55) [0 1 0])
        (rotate (deg2rad 40) [0 0 1])))
-(defn dowell-angle [shape]
+(defn btu-angle [shape]
   (->> shape
        (rotate (deg2rad (+ 90 35)) [0 0 1])
        (rotate (deg2rad -30) [0 1 0])
        (rotate (deg2rad 25) [1 0 0])))
 
-(def rotated-dowells
-  (dowell-angle
-   (translate [0 0 (- (/ holder-thickness 2))] dowells)))
+(def rotated-btus
+  (btu-angle
+   (translate [0 0 (- (/ holder-thickness 2))] btus)))
 
+(def rotated-backs
+  (btu-angle
+   (translate [0 0 (- (/ holder-thickness 2))] btu-backs)))
 (def rotated-bottom-trim (sensor-hole-angle bottom-trim))
 
 ; This makes sure we can actually insert the trackball by leaving a column a little wider than it's width
 (def trackball-insertion-cyl
-  (dowell-angle
+  (btu-angle
     (translate [0 0 (- (/ trackball-width 2) (/ holder-thickness 2))]
                (cylinder (+ (/ trackball-width 2) 1) (+ (/ outer-width 2) 10)))))
 
@@ -182,10 +190,11 @@
   (union
    (difference
     (union
+     rotated-backs
      (trackball-mount-rotate cup)
      (filler-rotate cup))
     ; subtract out room for the axels
-    rotated-dowells
+    rotated-btus
     ; Subtract out the bottom trim clearing a hole for the sensor
     rotated-bottom-trim)
    (sensor-hole-angle sensor-holder)))
@@ -212,7 +221,7 @@
   (difference (translate trackball-origin filler-half-circle)
               key-clearance
               thumb-key-clearance
-              (translate trackball-origin rotated-dowells)))
+              (translate trackball-origin rotated-btus)))
 
 (def trackball-to-case
   (difference
@@ -231,7 +240,7 @@
       (bottom 25
               (left-key-place cornerrow -1 (translate (wall-locate3 -1 0) big-boi-web-post)))
       (translate trackball-origin (trackball-mount-rotate cup))))
-    (translate trackball-origin rotated-dowells)
+    (translate trackball-origin rotated-btus)
     (translate trackball-origin rotated-bottom-trim)))
 
 
@@ -251,17 +260,17 @@
     key-clearance
     thumb-key-clearance
     (translate trackball-origin rotated-bottom-trim)
-    (translate trackball-origin rotated-dowells))))
+    (translate trackball-origin rotated-btus))))
 
 
 (def trackball-subtract
   (union
    ; Subtract out the actual trackball
-   (translate trackball-origin (dowell-angle raised-trackball))
+   (translate trackball-origin (btu-angle raised-trackball))
    ; Subtract out space for the cup, because sometimes things from the keyboard creep in
    (translate trackball-origin (sphere (/ trackball-width-plus-bearing 2)))
-   ; Just... double check that we have the full dowell negative
-   (translate trackball-origin rotated-dowells)))
+   ; Just... double check that we have the full btu negative
+   (translate trackball-origin rotated-btus)))
 
 (def trackball-mount-translated-to-model
   (difference
@@ -278,6 +287,7 @@
       (write-scad
        (difference
         (union
+        ;; (translate trackball-origin rotated-btus)
          trackball-mount-translated-to-model
          trackball-walls)
         trackball-subtract
